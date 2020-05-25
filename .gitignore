@@ -1,0 +1,21 @@
+*.py[co]
+*.sw[po]
+*~
+*.log
+.DS_Store
+/static/
+node_modules/
+runserver
+/tmp/
+/media/
+# pycharm
+.idea/
+runserver
+celeryd.pid
+
+*.scssc
+
+# npm
+package-lock.json
+
+
