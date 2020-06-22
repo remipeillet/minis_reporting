@@ -35,6 +35,7 @@ class UnitSerializer(serializers.ModelSerializer):
     class Meta:
         model = Unit
         fields = ['army', 'name', 'state', 'number_of_minis', 'type', 'id']
+        depth = 1
 
 
 class UnitTypeSerializer(serializers.ModelSerializer):

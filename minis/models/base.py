@@ -72,7 +72,7 @@ class Unit(models.Model):
     STATE_UNDERCOAT = 2
     STATE_PAINT_WIP = 3
     STATE_MADE_BASE = 4
-    STATE_FINISHED = 4
+    STATE_FINISHED = 5
     STATE_CHOICES = [
         (STATE_CLUSTER, _("Sur grappe")),
         (STATE_ASSEMBLY_READY, _("Assemblage")),
@@ -95,7 +95,7 @@ class Unit(models.Model):
         verbose_name=_("nombre de figurines de l'unité"), default=1)
 
     @classmethod
-    def get_state_label_by_stae_number(cls, state):
+    def get_state_label_by_state_number(cls, state):
         dict_of_state = dict(cls.STATE_CHOICES)
         if state in dict_of_state.keys():
             return str(dict(cls.STATE_CHOICES)[state])

@@ -1,6 +1,7 @@
+from django.http import JsonResponse
+
 from rest_framework import viewsets, permissions, mixins
 from rest_framework.decorators import action
-from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
 from ..filters import (
@@ -20,15 +21,17 @@ class GameViewSet(viewsets.GenericViewSet, mixins.ListModelMixin,
 
     @action(detail=True)
     def get_units_stats(self, request, pk=None):
-        units_state = {}
-        unit_state_list = Unit.objects.filter(
-            army__faction__game_id=pk).values_list('state', flat=True
-                                                   ).distinct()
-        for state in unit_state_list:
-            units_state[Unit.get_state_label_by_stae_number(state)] = \
-                Unit.objects.filter(state=state, army__faction__game_id=pk
-                                    ).count()
-        return Response(JSONRenderer().render(units_state))
+        units_state_label = []
+        units_state_count = []
+        for unit_state in Unit.STATE_CHOICES:
+            units_state_label.append(
+                Unit.get_state_label_by_state_number(unit_state[0]))
+            units_state_count.append(Unit.objects.filter(
+                state=unit_state[0], army__faction__game_id=pk).count())
+
+        print(units_state_label)
+        return JsonResponse(
+            {'labels': units_state_label, 'datas': units_state_count})
 
 
 class FactionViewSet(viewsets.GenericViewSet, mixins.ListModelMixin,
@@ -40,13 +43,15 @@ class FactionViewSet(viewsets.GenericViewSet, mixins.ListModelMixin,
 
     @action(detail=True)
     def get_units_stats(self, request, pk=None):
-        units_state = {}
+        units_state_label = units_state_count = []
         unit_state_list = Unit.objects.filter(
             army__faction_id=pk).values_list('state', flat=True).distinct()
         for state in unit_state_list:
-            units_state[Unit.get_state_label_by_stae_number(state)] = \
-                Unit.objects.filter(state=state, army__faction_id=pk).count()
-        return Response(JSONRenderer().render(units_state))
+            units_state_label.append(Unit.get_state_label_by_state_number(state))
+            units_state_count.append(Unit.objects.filter(
+                state=state, army__faction_id=pk).count())
+        return Response(JSONRenderer().render(
+            {'labels': units_state_label, 'datas': units_state_count}))
 
 
 class ArmyViewSet(viewsets.GenericViewSet, mixins.ListModelMixin,
@@ -58,13 +63,15 @@ class ArmyViewSet(viewsets.GenericViewSet, mixins.ListModelMixin,
 
     @action(detail=True)
     def get_units_stats(self, request, pk=None):
-        units_state = {}
+        units_state_label = units_state_count = []
         unit_state_list = Unit.objects.filter(
             army_id=pk).values_list('state', flat=True).distinct()
         for state in unit_state_list:
-            units_state[Unit.get_state_label_by_stae_number(state)] = \
-                Unit.objects.filter(state=state, army_id=pk).count()
-        return Response(JSONRenderer().render(units_state))
+            units_state_label.append(Unit.get_state_label_by_state_number(state))
+            units_state_count.append(Unit.objects.filter(
+                state=state, army_id=pk).count())
+        return JsonResponse(
+            {'labels': units_state_label, 'datas': units_state_count})
 
 
 class UnitViewSet(viewsets.GenericViewSet, mixins.ListModelMixin,
